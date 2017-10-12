@@ -24,24 +24,7 @@
   $rekap_operator_perhari = query_rows("hari", "SELECT o.nama as nama_operator, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-05' THEN e.jml_dok_terima END),0) as tgl5, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-06' THEN e.jml_dok_terima END),0) as tgl6, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-09' THEN e.jml_dok_terima END),0) as tgl9, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-10' THEN e.jml_dok_terima END),0) as tgl10, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-11' THEN e.jml_dok_terima END),0) as tgl11, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-12' THEN e.jml_dok_terima END),0) as tgl12, IFNULL(SUM(e.jml_dok_terima),0) as total FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra' AND e.is_terima=1 GROUP BY o.id ORDER BY o.id");
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="assets/js/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="assets/js/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <script src="assets/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-
-    <script src="assets/js/plotly-latest.min.js"></script>
-  </head>
+<?php include 'partials/header.php'; ?>
   <body>
     <div class="container">
       <ul class="nav justify-content-end">
@@ -234,11 +217,7 @@
         </div>
       </div>
       <hr />
-      <div class="row">
-        <div class="col-12">
-          <p class="text-center">Copyright &copy; 2017  <a href="http://lampung.bps.go.id">BPS Provinsi Lampung</a></p>
-        </div>
-      </div>
+      <?php include 'partials/footer.php';?>
     </div>
     <!-- Chart code -->
     <script>
