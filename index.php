@@ -86,8 +86,8 @@
         </div>
       </div>
       <br /><br />
-      <h3>Rekap Entri Per Kabupaten/Kota</h3>
-      <h6>Berdasarkan dokumen yang sudah dikembalikan ke pengawas pengolahan</h6>
+      <h3>Rekap Entri Per Kabupaten/Kota (Batch)</h3>
+      <h6>Berdasarkan batch yang sudah dikembalikan ke pengawas pengolahan</h6>
       <div class="row">
         <div class="col-12">
           <div id="rekapEntriKabkota"></div>
@@ -95,25 +95,31 @@
       </div>
       <br /><br />
       <h3>Rekap Entri Per Operator</h3>
-      <h6>Sedang entri => dokumen masih di operator dalam masa entri.</h6>
-      <h6>Sudah entri => dokumen sudah dientri dan dikembalikan ke pengawas pengolahan, siap validasi.</h6>
+      <h6>Sedang entri => batch/dokumen masih di operator dalam masa entri.</h6>
+      <h6>Sudah entri => batch/dokumen sudah dientri dan dikembalikan ke pengawas pengolahan, siap validasi.</h6>
       <br />
       <div class="row">
         <div class="col-12">
           <table class="table table-striped table-hover table-bordered">
-            <thead>
-              <th>No.</th>
-              <th>Nama Operator</th>
-              <th>Batch sedang Entri</th>
-              <th>Dokumen sedang Entri</th>
-              <th>Batch sudah Entri</th>
-              <th>Dokumen sudah Entri</th>
-              <th>Total Batch Entri</th>
-              <th>Total Dokumen Entri</th>
-            </thead>
             <tbody>
+              <tr style="background-color: #A52238;color: white; font-weight: bold;">
+                <td class="text-center">No.</td>
+                <td class="text-center">Nama Operator</td>
+                <td class="text-center">Batch sedang Entri</td>
+                <td class="text-center">Dokumen sedang Entri</td>
+                <td class="text-center">Batch sudah Entri</td>
+                <td class="text-center">Dokumen sudah Entri</td>
+                <td class="text-center">Jumlah Batch Entri</td>
+                <td class="text-center">Jumlah Dokumen Entri</td>
+              </tr>
               <?php
                 $i = 0;
+                $jml1 = 0;
+                $jml2 = 0;
+                $jml3 = 0;
+                $jml4 = 0;
+                $jml5 = 0;
+                $jml6 = 0;
                 foreach ($rekap_operator_all as $list => $row) {
                   echo "<tr>";
                   echo "<td class='text-center'>".($i + 1)."</td>";
@@ -126,8 +132,23 @@
                   echo "<td class='text-center'>".($row['total_dok_entri'] != null ? $row['total_dok_entri'] : 0)."</td>";
                   echo "</tr>";
                   $i++;
+                  $jml1+=$row['jml_batch_sedang_entri'];
+                  $jml2+=$row['jml_dok_sedang_entri'];
+                  $jml3+=$row['jml_batch_sudah_entri'];
+                  $jml4+=$row['jml_dok_sudah_entri'];
+                  $jml5+=$row['total_batch_entri'];
+                  $jml6+=$row['total_dok_entri'];
                 }
               ?>
+              <tr style="background-color: #A52238; color: white; font-weight: bold;">
+                <td colspan="2">Total Entri</td>
+                <td class="text-center"><?php echo $jml1;?></td>
+                <td class="text-center"><?php echo $jml2;?></td>
+                <td class="text-center"><?php echo $jml3;?></td>
+                <td class="text-center"><?php echo $jml4;?></td>
+                <td class="text-center"><?php echo $jml5;?></td>
+                <td class="text-center"><?php echo $jml6;?></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -144,7 +165,7 @@
                 <td rowspan="2" class="text-center">No.</td>
                 <td rowspan="2" class="text-center">Nama Operator</td>
                 <td colspan="6" class="text-center">Tanggal Entri</td>
-                <td rowspan="2" class="text-center">Total Entri</td>
+                <td rowspan="2" class="text-center">Jumlah Entri per Orang</td>
               </tr>
               <tr style="background-color: #A52238; color: white; font-weight: bold;">
                 <td class="text-center">5 Okt</td>
@@ -156,6 +177,13 @@
               </tr>
               <?php
                 $j = 0;
+                $tgl5 = 0;
+                $tgl6 = 0;
+                $tgl9 = 0;
+                $tgl10 = 0;
+                $tgl11 = 0;
+                $tgl12 = 0;
+                $tgltotal = 0;
                 foreach ($rekap_operator_perhari as $list => $row) {
                   echo "<tr>";
                   echo "<td class='text-center'>".($j+1)."</td>";
@@ -168,9 +196,26 @@
                   echo "<td class='text-center'>".($row['tgl12'])."</td>";
                   echo "<td class='text-center'>".($row['total'])."</td>";
                   echo "</tr>";
+                  $tgl5+=$row['tgl5'];
+                  $tgl6+=$row['tgl6'];
+                  $tgl9+=$row['tgl9'];
+                  $tgl10+=$row['tgl10'];
+                  $tgl11+=$row['tgl11'];
+                  $tgl12+=$row['tgl12'];
+                  $tgltotal+=$row['total'];
                   $j++;
                 }
               ?>
+              <tr style="background-color: #A52238; color: white; font-weight: bold;">
+                <td colspan="2">Total Entri Per Hari</td>
+                <td class="text-center"><?php echo $tgl5;?></td>
+                <td class="text-center"><?php echo $tgl6;?></td>
+                <td class="text-center"><?php echo $tgl9;?></td>
+                <td class="text-center"><?php echo $tgl10;?></td>
+                <td class="text-center"><?php echo $tgl11;?></td>
+                <td class="text-center"><?php echo $tgl12;?></td>
+                <td class="text-center"><?php echo $tgltotal;?></td>
+              </tr>
             </tbody>
           </table>
         </div>
