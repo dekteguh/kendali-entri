@@ -7,7 +7,7 @@ Ini adalah lanjutan dari lapor entri (Android) dan juga monitor entri (Java Swin
 ## Fitur
 
 - [x] Report untuk Operator Entri
-- [ ] Report untuk Operator Validasi
+- [x] Report untuk Operator Validasi
 - [ ] Ekspor data untuk report
 
 ## Hubungi kami
