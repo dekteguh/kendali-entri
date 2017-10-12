@@ -1,8 +1,8 @@
 <?php
 /**
- * Short description for index.php
+ * Short description for entri.php
  *
- * @package index
+ * @package entri
  * @author Eko Teguh Widodo <dekteguh@gmail.com>
  * @version 0.1
  * @copyright (C) 2017 Eko Teguh Widodo <dekteguh@gmail.com>
@@ -12,16 +12,16 @@
   include 'db.php';
   include 'util.php';
 
-  $total_batch_sedang_entri = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_serah=1");
-  $total_batch_sudah_entri = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_terima=1");
-  $total_dok_sedang_entri = query_count("SELECT sum(jml_dok_serah) as total FROM entrian WHERE is_serah=1");
-  $total_dok_sudah_entri = query_count("SELECT sum(jml_dok_terima) as total FROM entrian WHERE is_terima=1");
+  $total_batch_sedang_entri = query_count("SELECT COUNT(*) as total FROM validasi WHERE is_serah=1");
+  $total_batch_sudah_entri = query_count("SELECT COUNT(*) as total FROM validasi WHERE is_terima=1");
+  $total_dok_sedang_entri = query_count("SELECT sum(jml_dok_serah) as total FROM validasi WHERE is_serah=1");
+  $total_dok_sudah_entri = query_count("SELECT sum(jml_dok_terima) as total FROM validasi WHERE is_terima=1");
 
-  $rekap_kabkota_all = query_rows("kabkota", "SELECT w.nama as nama_kabkota, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM wilayah w LEFT JOIN entrian e ON w.id=e.kabkota_id  GROUP BY w.id ORDER BY w.id");
+  $rekap_kabkota_all = query_rows("kabkota", "SELECT w.nama as nama_kabkota, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM wilayah w LEFT JOIN validasi e ON w.id=e.kabkota_id  GROUP BY w.id ORDER BY w.id");
 
-  $rekap_operator_all = query_rows("operator","SELECT o.nama as nama_operator, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra'  GROUP BY o.id ORDER BY o.id");
+  $rekap_operator_all = query_rows("operator","SELECT o.nama as nama_operator, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM operator o LEFT JOIN validasi e ON o.id=e.operator_id WHERE o.status='Organik'  GROUP BY o.id ORDER BY o.id");
 
-  $rekap_operator_perhari = query_rows("hari", "SELECT o.nama as nama_operator, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-05' THEN e.jml_dok_terima END),0) as tgl5, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-06' THEN e.jml_dok_terima END),0) as tgl6, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-09' THEN e.jml_dok_terima END),0) as tgl9, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-10' THEN e.jml_dok_terima END),0) as tgl10, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-11' THEN e.jml_dok_terima END),0) as tgl11, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-12' THEN e.jml_dok_terima END),0) as tgl12, IFNULL(SUM(e.jml_dok_terima),0) as total FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra' AND e.is_terima=1 GROUP BY o.id ORDER BY o.id");
+  $rekap_operator_perhari = query_rows("hari", "SELECT o.nama as nama_operator, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-05' THEN e.jml_dok_terima END),0) as tgl5, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-06' THEN e.jml_dok_terima END),0) as tgl6, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-09' THEN e.jml_dok_terima END),0) as tgl9, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-10' THEN e.jml_dok_terima END),0) as tgl10, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-11' THEN e.jml_dok_terima END),0) as tgl11, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-12' THEN e.jml_dok_terima END),0) as tgl12, IFNULL(SUM(e.jml_dok_terima),0) as total FROM operator o LEFT JOIN validasi e ON o.id=e.operator_id WHERE o.status='Organik' AND e.is_terima=1 GROUP BY o.id ORDER BY o.id");
 ?>
 
 <!DOCTYPE html>
@@ -46,10 +46,10 @@
     <div class="container">
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <a class="nav-link btn btn-danger" href="<?php echo base_url();?>">Entri</a>
+          <a class="nav-link" href="<?php echo base_url();?>">Entri</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="<?php echo base_url();?>validasi.php">Validasi</a>
+          <a class="nav-link btn btn-danger" href="<?php echo base_url();?>validasi.php">Validasi</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="<?php echo base_url();?>about.php">Tentang Kendali Pengolahan</a>
@@ -60,14 +60,14 @@
         <h3 class="text-center">Progress Report Kendali Pengolahan SE2016 UMK dan UMB</h3>
       </div>
       <div class="navbar-text">
-        <b>ENTRI</b> sampai dengan <?php echo date('d-M-Y');?>
+        <b>VALIDASI</b> sampai dengan <?php echo date('d-M-Y');?>
       </div>
       <hr />
       <br />
       <div class="row">
         <div class="col-3">
           <div class="card text-white bg-danger">
-            <div class="card-header">Batch sedang entri</div>
+            <div class="card-header">Batch sedang validasi</div>
             <div class="card-body">
                <h4 class="text-center"><?php echo $total_batch_sedang_entri; ?></h4>
             </div>
@@ -75,7 +75,7 @@
         </div>
         <div class="col-3">
           <div class="card text-white bg-warning">
-            <div class="card-header">Batch sudah entri</div>
+            <div class="card-header">Batch sudah validasi</div>
             <div class="card-body">
                <h4 class="text-center"><?php echo $total_batch_sudah_entri; ?></h4>
             </div>
@@ -83,7 +83,7 @@
         </div>
         <div class="col-3">
           <div class="card text-white bg-success">
-            <div class="card-header">Dokumen sedang entri</div>
+            <div class="card-header">Dokumen sedang validasi</div>
             <div class="card-body">
                <h4 class="text-center"><?php echo $total_dok_sedang_entri; ?></h4>
             </div>
@@ -91,7 +91,7 @@
         </div>
         <div class="col-3">
           <div class="card text-white bg-primary">
-            <div class="card-header">Dokumen sudah entri</div>
+            <div class="card-header">Dokumen sudah validasi</div>
             <div class="card-body">
                <h4 class="text-center"><?php echo $total_dok_sudah_entri; ?></h4>
             </div>
@@ -99,17 +99,17 @@
         </div>
       </div>
       <br /><br />
-      <h3>Rekap Entri Per Kabupaten/Kota (Batch)</h3>
+      <h3>Rekap validasi Per Kabupaten/Kota (Batch)</h3>
       <h6>Berdasarkan batch yang sudah dikembalikan ke pengawas pengolahan</h6>
       <div class="row">
         <div class="col-12">
-          <div id="rekapEntriKabkota"></div>
+          <div id="rekapentriKabkota"></div>
         </div>
       </div>
       <br /><br />
-      <h3>Rekap Entri Per Operator</h3>
-      <h6>Sedang entri => batch/dokumen masih di operator dalam masa entri.</h6>
-      <h6>Sudah entri => batch/dokumen sudah dientri dan dikembalikan ke pengawas pengolahan, siap validasi.</h6>
+      <h3>Rekap validasi Per Operator</h3>
+      <h6>Sedang validasi => batch/dokumen masih di operator dalam masa validasi.</h6>
+      <h6>Sudah validasi => batch/dokumen sudah divalidasi dan dikembalikan ke pengawas pengolahan.</h6>
       <br />
       <div class="row">
         <div class="col-12">
@@ -118,12 +118,12 @@
               <tr style="background-color: #A52238;color: white; font-weight: bold;">
                 <td class="text-center">No.</td>
                 <td class="text-center">Nama Operator</td>
-                <td class="text-center">Batch sedang Entri</td>
-                <td class="text-center">Dokumen sedang Entri</td>
-                <td class="text-center">Batch sudah Entri</td>
-                <td class="text-center">Dokumen sudah Entri</td>
-                <td class="text-center">Jumlah Batch Entri</td>
-                <td class="text-center">Jumlah Dokumen Entri</td>
+                <td class="text-center">Batch sedang validasi</td>
+                <td class="text-center">Dokumen sedang validasi</td>
+                <td class="text-center">Batch sudah validasi</td>
+                <td class="text-center">Dokumen sudah validasi</td>
+                <td class="text-center">Jumlah Batch validasi</td>
+                <td class="text-center">Jumlah Dokumen validasi</td>
               </tr>
               <?php
                 $i = 0;
@@ -154,7 +154,7 @@
                 }
               ?>
               <tr style="background-color: #A52238; color: white; font-weight: bold;">
-                <td colspan="2">Total Entri</td>
+                <td colspan="2">Total validasi</td>
                 <td class="text-center"><?php echo $jml1;?></td>
                 <td class="text-center"><?php echo $jml2;?></td>
                 <td class="text-center"><?php echo $jml3;?></td>
@@ -167,7 +167,7 @@
         </div>
       </div>
       <br /><br />
-      <h3>Rekap Entri Per Operator Per hari</h3>
+      <h3>Rekap validasi Per Operator Per hari</h3>
       <h6>Berdasarkan dokumen yang sudah dikembalikan ke pengawas pengolahan</h6>
       <br />
       <div class="row">
@@ -177,8 +177,8 @@
               <tr style="background-color: #A52238;color: white; font-weight: bold;">
                 <td rowspan="2" class="text-center">No.</td>
                 <td rowspan="2" class="text-center">Nama Operator</td>
-                <td colspan="6" class="text-center">Tanggal Entri</td>
-                <td rowspan="2" class="text-center">Jumlah Entri per Orang</td>
+                <td colspan="6" class="text-center">Tanggal validasi</td>
+                <td rowspan="2" class="text-center">Jumlah validasi per Orang</td>
               </tr>
               <tr style="background-color: #A52238; color: white; font-weight: bold;">
                 <td class="text-center">5 Okt</td>
@@ -220,7 +220,7 @@
                 }
               ?>
               <tr style="background-color: #A52238; color: white; font-weight: bold;">
-                <td colspan="2">Total Entri Per Hari</td>
+                <td colspan="2">Total validasi Per Hari</td>
                 <td class="text-center"><?php echo $tgl5;?></td>
                 <td class="text-center"><?php echo $tgl6;?></td>
                 <td class="text-center"><?php echo $tgl9;?></td>
@@ -259,14 +259,14 @@
         x: kabkota,
         y: jumlah,
         type: 'bar',
-        name: 'Jumlah batch entri',
+        name: 'Jumlah batch validasi',
         marker: {
           color: 'rgb(49,130,189)',
           opacity: 0.7,
         }
       }];
 
-      Plotly.newPlot('rekapEntriKabkota', data);
+      Plotly.newPlot('rekapentriKabkota', data);
 
     </script>
   </body>
