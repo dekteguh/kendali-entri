@@ -16,9 +16,11 @@
   $total_dok_sedang_entri = query_count("SELECT sum(jml_dok_serah) as total FROM entrian WHERE is_serah=1");
   $total_dok_sudah_entri = query_count("SELECT sum(jml_dok_terima) as total FROM entrian WHERE is_terima=1");
 
-  $rekap_kabkota_all = query_rows("kabkota", "SELECT w.nama as nama_kabkota, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM wilayah w LEFT JOIN entrian e ON w.id = e.kabkota_id  GROUP BY w.id ORDER BY w.id");
+  $rekap_kabkota_all = query_rows("kabkota", "SELECT w.nama as nama_kabkota, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM wilayah w LEFT JOIN entrian e ON w.id=e.kabkota_id  GROUP BY w.id ORDER BY w.id");
 
-  $rekap_operator_all = query_rows("operator","SELECT o.nama as nama_operator, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM operator o LEFT JOIN entrian e ON o.id = e.operator_id WHERE o.status='Mitra'  GROUP BY o.id ORDER BY o.id");
+  $rekap_operator_all = query_rows("operator","SELECT o.nama as nama_operator, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra'  GROUP BY o.id ORDER BY o.id");
+
+  $rekap_operator_perhari = query_rows("hari", "SELECT o.nama as nama_operator, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-05' THEN e.jml_dok_terima END),0) as tgl5, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-06' THEN e.jml_dok_terima END),0) as tgl6, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-09' THEN e.jml_dok_terima END),0) as tgl9, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-10' THEN e.jml_dok_terima END),0) as tgl10, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-11' THEN e.jml_dok_terima END),0) as tgl11, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-12' THEN e.jml_dok_terima END),0) as tgl12, IFNULL(SUM(e.jml_dok_terima),0) as total FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra' AND e.is_terima=1 GROUP BY o.id ORDER BY o.id");
 ?>
 
 <!DOCTYPE html>
@@ -85,6 +87,7 @@
       </div>
       <br /><br />
       <h3>Rekap Entri Per Kabupaten/Kota</h3>
+      <h6>Berdasarkan dokumen yang sudah dikembalikan ke pengawas pengolahan</h6>
       <div class="row">
         <div class="col-12">
           <div id="rekapEntriKabkota"></div>
@@ -92,6 +95,8 @@
       </div>
       <br /><br />
       <h3>Rekap Entri Per Operator</h3>
+      <h6>Sedang entri => dokumen masih di operator dalam masa entri.</h6>
+      <h6>Sudah entri => dokumen sudah dientri dan dikembalikan ke pengawas pengolahan, siap validasi.</h6>
       <br />
       <div class="row">
         <div class="col-12">
@@ -121,6 +126,49 @@
                   echo "<td class='text-center'>".($row['total_dok_entri'] != null ? $row['total_dok_entri'] : 0)."</td>";
                   echo "</tr>";
                   $i++;
+                }
+              ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <br /><br />
+      <h3>Rekap Entri Per Operator Per hari</h3>
+      <h6>Berdasarkan dokumen yang sudah dikembalikan ke pengawas pengolahan</h6>
+      <br />
+      <div class="row">
+        <div class="col-12">
+          <table class="table table-striped table-hover table-bordered">
+            <tbody>
+              <tr style="background-color: #A52238;color: white; font-weight: bold;">
+                <td rowspan="2" class="text-center">No.</td>
+                <td rowspan="2" class="text-center">Nama Operator</td>
+                <td colspan="6" class="text-center">Tanggal Entri</td>
+                <td rowspan="2" class="text-center">Total Entri</td>
+              </tr>
+              <tr style="background-color: #A52238; color: white; font-weight: bold;">
+                <td class="text-center">5 Okt</td>
+                <td class="text-center">6 Okt</td>
+                <td class="text-center">9 Okt</td>
+                <td class="text-center">10 Okt</td>
+                <td class="text-center">11 Okt</td>
+                <td class="text-center">12 Okt</td>
+              </tr>
+              <?php
+                $j = 0;
+                foreach ($rekap_operator_perhari as $list => $row) {
+                  echo "<tr>";
+                  echo "<td class='text-center'>".($j+1)."</td>";
+                  echo "<td>".($row['nama_operator'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl5'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl6'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl9'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl10'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl11'])."</td>";
+                  echo "<td class='text-center'>".($row['tgl12'])."</td>";
+                  echo "<td class='text-center'>".($row['total'])."</td>";
+                  echo "</tr>";
+                  $j++;
                 }
               ?>
             </tbody>

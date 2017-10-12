@@ -74,6 +74,19 @@ function query_rows($jenis, $query){
         $result[] = $arr;
       }
     }
+    if($jenis == "hari"){
+      while($row = mysqli_fetch_assoc($r)){
+        $arr['nama_operator'] = $row['nama_operator'];
+        $arr['tgl5'] = $row['tgl5'];
+        $arr['tgl6'] = $row['tgl6'];
+        $arr['tgl9'] = $row['tgl9'];
+        $arr['tgl10'] = $row['tgl10'];
+        $arr['tgl11'] = $row['tgl11'];
+        $arr['tgl12'] = $row['tgl12'];
+        $arr['total'] = $row['total'];
+        $result[] = $arr;
+      }
+    }
   }
 
   mysqli_free_result($r);
