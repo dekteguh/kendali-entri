@@ -21,13 +21,13 @@
 
   // Query Validasi
 
-  $total_batch_sedang_validasi = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_serah=1");
+  $total_batch_sedang_validasi = query_count("SELECT COUNT(*) as total FROM validasi WHERE is_serah=1");
 
-  $total_batch_sudah_validasi = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_terima=1");
+  $total_batch_sudah_validasi = query_count("SELECT COUNT(*) as total FROM validasi WHERE is_terima=1");
 
-  $total_dok_sedang_validasi = query_count("SELECT sum(jml_dok_serah) as total FROM entrian WHERE is_serah=1");
+  $total_dok_sedang_validasi = query_count("SELECT sum(jml_dok_serah) as total FROM validasi WHERE is_serah=1");
 
-  $total_dok_sudah_validasi = query_count("SELECT sum(jml_dok_terima) as total FROM entrian WHERE is_terima=1");
+  $total_dok_sudah_validasi = query_count("SELECT sum(jml_dok_terima) as total FROM validasi WHERE is_terima=1");
 
   $rekap_harian_validasi = query_graph("harian","SELECT waktu_terima, SUM(jml_dok_terima) as jml_dok_terima FROM validasi WHERE is_terima=1 GROUP BY waktu_terima");
 
