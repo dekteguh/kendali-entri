@@ -9,24 +9,10 @@
  * @license MIT
  */
 
-  include 'db.php';
-  include 'util.php';
+  include 'commons/db.php';
+  include 'commons/util.php';
+  include 'commons/query.php';
   require_once('api.php');
-
-  $total_batch_sedang_entri = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_serah=1");
-  $total_batch_sudah_entri = query_count("SELECT COUNT(*) as total FROM entrian WHERE is_terima=1");
-  $total_dok_sedang_entri = query_count("SELECT sum(jml_dok_serah) as total FROM entrian WHERE is_serah=1");
-  $total_dok_sudah_entri = query_count("SELECT sum(jml_dok_terima) as total FROM entrian WHERE is_terima=1");
-
-  $rekap_harian = query_graph("harian","SELECT waktu_terima, SUM(jml_dok_terima) as jml_dok_terima FROM entrian WHERE is_terima=1 GROUP BY waktu_terima");
-
-  $rekap_kabkota_all = query_rows("kabkota", "SELECT w.nama as nama_kabkota, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM wilayah w LEFT JOIN entrian e ON w.id=e.kabkota_id  GROUP BY w.id ORDER BY w.id");
-
-  $rekap_operator_all = query_rows("operator","SELECT o.nama as nama_operator, COUNT(CASE WHEN e.is_serah=1 THEN e.id END) as jml_batch_sedang_entri, SUM(CASE WHEN e.is_serah=1 THEN e.jml_dok_serah END) as jml_dok_sedang_entri, COUNT(CASE WHEN e.is_terima=1 THEN e.id END) as jml_batch_sudah_entri, SUM(CASE WHEN e.is_terima=1 THEN e.jml_dok_terima END) as jml_dok_sudah_entri, COUNT(e.id) as total_batch_entri, SUM(e.jml_dok_serah) as total_dok_entri FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra'  GROUP BY o.id ORDER BY o.id");
-
-  $rekap_operator_perhari = query_rows("hari", "SELECT o.nama as nama_operator, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-05' THEN e.jml_dok_terima END),0) as tgl5, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-06' THEN e.jml_dok_terima END),0) as tgl6, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-09' THEN e.jml_dok_terima END),0) as tgl9, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-10' THEN e.jml_dok_terima END),0) as tgl10, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-11' THEN e.jml_dok_terima END),0) as tgl11, IFNULL(SUM(CASE WHEN e.waktu_terima='2017-10-12' THEN e.jml_dok_terima END),0) as tgl12, IFNULL(SUM(e.jml_dok_terima),0) as total FROM operator o LEFT JOIN entrian e ON o.id=e.operator_id WHERE o.status='Mitra' AND e.is_terima=1 GROUP BY o.id ORDER BY o.id");
-
-  $operators = query_rows("o","SELECT * FROM operator WHERE status='Mitra'");
 ?>
 
 <?php include 'partials/header.php'; ?>
@@ -103,23 +89,23 @@
         </div>
       </div>
       <br /><br />
-      <h3>Rekap Entri Per Operator Per hari</h3>
+      <h3>Rekap Entri Per Operator Per hari (Dokumen)</h3>
       <h6>Berdasarkan dokumen yang sudah dikembalikan ke pengawas pengolahan</h6>
       <br />
       <div class="row">
         <div class="col-12">
           <form>
             <div class="form-group">
-              <label for="pilihOperator">Pilih Operator untuk melihat progress Report Entri</label>
-              <select class="form-control col-6" id="pilihOperator" name="pilihOperator">
+              <label for="pilihOperatorEntri">Pilih Operator untuk melihat progress Report Entri</label>
+              <select class="form-control col-6" id="pilihOperatorEntri" name="pilihOperatorEntri">
                 <option value="00">- Pilih Operator -</option>
-                <?php foreach ($operators as $list => $row) {
+                <?php foreach ($operators_entri as $list => $row) {
                   echo '<option value="'.$row['id'].'">'.$row['nama'].'</option>';
                 }?>
               </select>
             </div>
           </form>
-          <div id="rekap_harian_operator"></div>
+          <div id="rekap_harian_operator_entri"></div>
         </div>
       </div>
       <br /><br />
@@ -149,7 +135,7 @@
                 $jml4 = 0;
                 $jml5 = 0;
                 $jml6 = 0;
-                foreach ($rekap_operator_all as $list => $row) {
+                foreach ($rekap_operator_entri as $list => $row) {
                   echo "<tr>";
                   echo "<td class='text-center'>".($i + 1)."</td>";
                   echo "<td>".($row['nama_operator'])."</td>";
@@ -188,25 +174,25 @@
     <!-- Chart code -->
     <script>
 
-      $('#pilihOperator').change(function(e){
+      $('#pilihOperatorEntri').change(function(e){
         e.preventDefault();
-        let operator = $('#pilihOperator').val();
+        let operator = $('#pilihOperatorEntri').val();
         let tgl_operator = [];
         let nilai_operator = [];
 
-        axios.get('<?php echo base_url();?>api.php/operators?id='+ operator).
+        axios.get('<?php echo base_url();?>api.php/operators?id='+ operator +'&status=Mitra').
             then(function(response){
               let operator_harians = response.data;
               for(y = 0; y < operator_harians.length; y++){
                 tgl_operator.push(operator_harians[y].waktu_terima);
                 nilai_operator.push(operator_harians[y].jml_dok_terima);
               }
-              Plotly.newPlot('rekap_harian_operator', rekapData(tgl_operator,nilai_operator,'line','Jumlah Dokumen Entri','rgb(49,130,189)',0.6));
+              Plotly.newPlot('rekap_harian_operator_entri', rekapData(tgl_operator,nilai_operator,'line','Jumlah Dokumen Entri','rgb(49,130,189)',0.6));
             });
       });
 
-      let kabkotas = <?php echo json_encode($rekap_kabkota_all);?>;
-      let harians = <?php echo json_encode($rekap_harian);?>;
+      let kabkotas = <?php echo json_encode($rekap_kabkota_entri);?>;
+      let harians = <?php echo json_encode($rekap_harian_entri);?>;
 
       let label_kabkota = [];
       let label_jumlah = [];
