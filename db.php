@@ -44,6 +44,25 @@ function query_count($query){
   return $count['total'];
 }
 
+function query_graph($jenis, $query){
+  $c = get_connection($GLOBALS['host'], $GLOBALS['username'], $GLOBALS['password']);
+  mysqli_select_db($c, $GLOBALS['database']);
+  $r = mysqli_query($c, $query);
+  $result = [];
+  if(mysqli_num_rows($r) > 0){
+    if($jenis == "harian"){
+      while($row = mysqli_fetch_assoc($r)){
+        $arr['waktu_terima'] = $row['waktu_terima'];
+        $arr['jml_dok_terima'] = $row['jml_dok_terima'];
+        $result[] = $arr;
+      }
+    }
+  }
+  mysqli_free_result($r);
+  mysqli_close($c);
+  return $result;
+}
+
 function query_rows($jenis, $query){
   $c = get_connection($GLOBALS['host'], $GLOBALS['username'], $GLOBALS['password']);
   mysqli_select_db($c, $GLOBALS['database']);
@@ -84,6 +103,14 @@ function query_rows($jenis, $query){
         $arr['tgl11'] = $row['tgl11'];
         $arr['tgl12'] = $row['tgl12'];
         $arr['total'] = $row['total'];
+        $result[] = $arr;
+      }
+    }
+    if($jenis == "o"){
+      while($row = mysqli_fetch_assoc($r)){
+        $arr['id'] = $row['id'];
+        $arr['nama'] = $row['nama'];
+        $arr['status'] = $row['status'];
         $result[] = $arr;
       }
     }
